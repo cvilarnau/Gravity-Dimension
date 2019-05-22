@@ -15,6 +15,7 @@ public class ShipMovement : MonoBehaviour
     public GameObject menuPause;
 
     bool pause = false;
+    bool velocityFast = false;
 
     void Start()
     {
@@ -88,7 +89,7 @@ public class ShipMovement : MonoBehaviour
         if (collision.gameObject.tag == "platform")
         {
             touchingPlatform = true;
-        }
+        } 
     }
 
     void OnCollisionExit(Collision collision)
@@ -104,6 +105,11 @@ public class ShipMovement : MonoBehaviour
         if (collision.gameObject.tag == "tunnel")
         {
             tunnel = true;
+        }
+
+        if (collision.gameObject.tag == "endCube")
+        {
+            print("FINAL!!!!");
         }
     }
 
@@ -135,12 +141,15 @@ public class ShipMovement : MonoBehaviour
         pause = false;
     }
 
-   /* private bool IsPointerOverUIObject()
+    void OnTriggerEnter(Collider collision)
     {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-        return results.Count > 0;
-    }*/
+        if (collision.gameObject.tag == "velocityTrigger")
+        {
+            if (!velocityFast)
+            {
+                GameObject.Find("Platforms").GetComponent<PlatformMovement>().maxSpeed = 100f;
+                velocityFast = true;
+            }
+        }
+    }
 }

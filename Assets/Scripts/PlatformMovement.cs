@@ -2,7 +2,12 @@
 
 public class PlatformMovement : MonoBehaviour
 {
-    public float maxSpeed = 5f;
+    public float maxSpeed;
+
+    private void Start()
+    {
+        maxSpeed = 6f;
+    }
 
     void Update()
 
