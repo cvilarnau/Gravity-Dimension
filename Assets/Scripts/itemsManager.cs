@@ -3,6 +3,12 @@
 public class itemsManager : MonoBehaviour
 {
     float speed = 5f;
+    public Renderer rend;
+
+    private void Start()
+    {
+        rend = GetComponent<Renderer>();
+    }
 
     void Update()
     {
@@ -17,7 +23,11 @@ public class itemsManager : MonoBehaviour
     {
         if (collision.gameObject.tag == "ship")
         {
-            print("PLEXK");
+            GameObject ship = GameObject.Find("StarSparrow5");
+            ShipMovement script = ship.GetComponent<ShipMovement>();
+            script.fuel = 100f;
+
+            rend.enabled = false;
         }
     }
 }

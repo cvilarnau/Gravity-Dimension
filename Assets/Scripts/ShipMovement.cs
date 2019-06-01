@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ShipMovement : MonoBehaviour
 {
@@ -17,12 +18,18 @@ public class ShipMovement : MonoBehaviour
     bool pause = false;
     bool velocityFast = false;
 
+    float maxfuel = 100f;
+    public Image fuelbar;
+    public float fuel;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         menuGameOver.SetActive(false);
         menuPause.SetActive(false);
         Time.timeScale = 1;
+
+        fuel = maxfuel;
     }
 
     void Update()
@@ -46,11 +53,14 @@ public class ShipMovement : MonoBehaviour
             transform.Translate(Input.acceleration.x, 0, 0);
         }
 
+        fuelbar.fillAmount = fuel / maxfuel;
+
         if (touchingPlatform)
         {
-            if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null))
+            if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null) && (fuelbar.fillAmount != 0f))
             {
                 rb.AddForce(new Vector3(0.0f, jumpForce, 0.0f));
+                Jump();
             }
         }
 
@@ -151,5 +161,11 @@ public class ShipMovement : MonoBehaviour
                 velocityFast = true;
             }
         }
+    }
+
+    // Restamos fuel con el salto
+    public void Jump()
+    {
+        fuel -= 20f;
     }
 }
