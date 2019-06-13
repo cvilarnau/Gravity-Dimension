@@ -17,24 +17,38 @@ public class ShipMovement : MonoBehaviour
 
     bool pause = false;
     bool velocityFast = false;
+    bool start = false;
+    bool levelFinished = false;
 
     float maxfuel = 100f;
     public Image fuelbar;
     public float fuel;
+
+    public GameObject startMessage;
+    public GameObject endMessage;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         menuGameOver.SetActive(false);
         menuPause.SetActive(false);
-        Time.timeScale = 1;
+        Time.timeScale = 0;
 
         fuel = maxfuel;
+
+        endMessage.SetActive(false);
     }
 
     void Update()
     {
-        GetComponent<Rigidbody>().AddForce(Physics.gravity, ForceMode.Acceleration);
+        if (Input.GetMouseButtonDown(0) && !dead && !pause && !levelFinished)
+        {
+            Time.timeScale = 1;
+            start = true;
+            Destroy(startMessage);
+        }
+
+        rb.AddForce(Physics.gravity, ForceMode.Acceleration);
 
         // movimiento provisional para pruebas en local con teclado
         if (Input.GetKey(KeyCode.A))
@@ -48,7 +62,7 @@ public class ShipMovement : MonoBehaviour
         }
         ////////////////////////////////////////////////////////////
 
-        if (!pause && !dead)
+        if (!pause && !dead && start && !levelFinished)
         {
             transform.Translate(Input.acceleration.x, 0, 0);
         }
@@ -119,7 +133,9 @@ public class ShipMovement : MonoBehaviour
 
         if (collision.gameObject.tag == "endCube")
         {
-            print("FINAL!!!!");
+            Time.timeScale = 0;
+            endMessage.SetActive(true);
+            levelFinished = true;
         }
     }
 
@@ -136,7 +152,7 @@ public class ShipMovement : MonoBehaviour
 
     public void Pause()
     {
-        if (!pause)
+        if (!pause && !dead)
         {
             menuPause.SetActive(true);
             Time.timeScale = 0;
@@ -146,9 +162,12 @@ public class ShipMovement : MonoBehaviour
 
     public void Resume()
     {
-        menuPause.SetActive(false);
-        Time.timeScale = 1;
-        pause = false;
+        if (!dead)
+        {
+            menuPause.SetActive(false);
+            Time.timeScale = 1;
+            pause = false;
+        }
     }
 
     void OnTriggerEnter(Collider collision)
