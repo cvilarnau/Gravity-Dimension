@@ -29,6 +29,11 @@ public class ShipMovement : MonoBehaviour
     public GameObject endMessage;
     public GameObject barrelMessage;
 
+    public GameObject explosion;
+    private Renderer[] rend;
+    private BoxCollider colli;
+    public GameObject candle;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -72,7 +77,7 @@ public class ShipMovement : MonoBehaviour
 
         fuelbar.fillAmount = fuel / maxfuel;
 
-        if (touchingPlatform && !barrelTuto)
+        if (touchingPlatform && !barrelTuto && !dead)
         {
             if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null) && (fuelbar.fillAmount != 0f))
             {
@@ -90,24 +95,26 @@ public class ShipMovement : MonoBehaviour
 
         if (tunnel)
         {
-            //Instantiate(explosion, transform.position, transform.rotation);
-            /*
-            //Primero deshabilitamos el sprite para que desaparezca la nave
-			rend = GetComponent<SpriteRenderer>();
-         	rend.enabled = false;
+            //sonido.PlayOneShot(sonidoExplosion);
 
-			//Seguidamente eliminamos el collider para evitar errores tras la muerte
-			colli = GetComponent<BoxCollider2D>();
-         	colli.enabled = false;
+            rend = GetComponentsInChildren<MeshRenderer>();
+            foreach (Renderer render in rend)
+            {
+                render.enabled = false;
+            }
 
-            sonido.PlayOneShot(sonidoExplosion);
+            colli = GetComponent<BoxCollider>();
+            colli.enabled = false;
 
-			//Finalmente eliminamos el gameobject tras la explosión
-			Destroy(NAVE, 2f);
-            */
+            candle.SetActive(false);
+
+            Instantiate(explosion, transform.position, transform.rotation);
+
+            Invoke("Dead", 4);
+
             dead = true;
-            Time.timeScale = 0;
-            menuGameOver.SetActive(true);
+
+            tunnel = false;
         }
 
         if (barrelTuto && Input.GetMouseButtonDown(0))
@@ -205,7 +212,7 @@ public class ShipMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "barrelTrigger")
         {
-            if (barrelTuto)
+            if (barrelTuto && !dead)
             {
                 barrelTuto = false;
             }
@@ -216,5 +223,11 @@ public class ShipMovement : MonoBehaviour
     public void Jump()
     {
         fuel -= 20f;
+    }
+
+    public void Dead()
+    {
+        Time.timeScale = 0;
+        menuGameOver.SetActive(true);
     }
 }

@@ -3556,6 +3556,8 @@ MonoBehaviour:
   startMessage: {fileID: 1720527673}
   endMessage: {fileID: 1617219921}
   barrelMessage: {fileID: 29666715}
+  explosion: {fileID: 166942, guid: abec14f8fffd543c7995c9e7afbfeeec, type: 3}
+  candle: {fileID: 1039291630}
 --- !u!65 &486737713
 BoxCollider:
   m_ObjectHideFlags: 0
