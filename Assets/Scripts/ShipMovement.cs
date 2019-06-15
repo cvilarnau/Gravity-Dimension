@@ -19,6 +19,7 @@ public class ShipMovement : MonoBehaviour
     bool velocityFast = false;
     bool start = false;
     bool levelFinished = false;
+    bool barrelTuto = false;
 
     float maxfuel = 100f;
     public Image fuelbar;
@@ -26,12 +27,14 @@ public class ShipMovement : MonoBehaviour
 
     public GameObject startMessage;
     public GameObject endMessage;
+    public GameObject barrelMessage;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         menuGameOver.SetActive(false);
         menuPause.SetActive(false);
+        barrelMessage.SetActive(false);
         Time.timeScale = 0;
 
         fuel = maxfuel;
@@ -41,7 +44,7 @@ public class ShipMovement : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !dead && !pause && !levelFinished)
+        if (Input.GetMouseButtonDown(0) && !dead && !pause && !levelFinished && !barrelTuto)
         {
             Time.timeScale = 1;
             start = true;
@@ -62,14 +65,14 @@ public class ShipMovement : MonoBehaviour
         }
         ////////////////////////////////////////////////////////////
 
-        if (!pause && !dead && start && !levelFinished)
+        if (!pause && !dead && start && !levelFinished && !barrelTuto)
         {
             transform.Translate(Input.acceleration.x, 0, 0);
         }
 
         fuelbar.fillAmount = fuel / maxfuel;
 
-        if (touchingPlatform)
+        if (touchingPlatform && !barrelTuto)
         {
             if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null) && (fuelbar.fillAmount != 0f))
             {
@@ -105,6 +108,12 @@ public class ShipMovement : MonoBehaviour
             dead = true;
             Time.timeScale = 0;
             menuGameOver.SetActive(true);
+        }
+
+        if (barrelTuto && Input.GetMouseButtonDown(0))
+        {
+            Time.timeScale = 1;
+            barrelMessage.SetActive(false);
         }
     }
 
@@ -178,6 +187,27 @@ public class ShipMovement : MonoBehaviour
             {
                 GameObject.Find("Platforms").GetComponent<PlatformMovement>().maxSpeed = 100f;
                 velocityFast = true;
+            }
+        }
+
+        if (collision.gameObject.tag == "barrelTrigger")
+        {
+            if (!barrelTuto)
+            {
+                barrelMessage.SetActive(true);
+                Time.timeScale = 0;
+                barrelTuto = true;
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider collision)
+    {
+        if (collision.gameObject.tag == "barrelTrigger")
+        {
+            if (barrelTuto)
+            {
+                barrelTuto = false;
             }
         }
     }
