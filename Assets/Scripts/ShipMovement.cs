@@ -70,14 +70,14 @@ public class ShipMovement : MonoBehaviour
         }
         ////////////////////////////////////////////////////////////
 
-        if (!pause && !dead && start && !levelFinished && !barrelTuto)
+        if (!pause && !dead && start && !levelFinished && !barrelTuto && velocityFast)
         {
             transform.Translate(Input.acceleration.x, 0, 0);
         }
 
         fuelbar.fillAmount = fuel / maxfuel;
 
-        if (touchingPlatform && !barrelTuto && !dead)
+        if (touchingPlatform && !barrelTuto && !dead && velocityFast)
         {
             if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null) && (fuelbar.fillAmount != 0f))
             {
@@ -149,9 +149,10 @@ public class ShipMovement : MonoBehaviour
 
         if (collision.gameObject.tag == "endCube")
         {
-            Time.timeScale = 0;
+            GameObject.Find("Platforms").GetComponent<PlatformMovement>().maxSpeed = 0f;
             endMessage.SetActive(true);
             levelFinished = true;
+            Invoke("End", 4);
         }
     }
 
@@ -229,5 +230,12 @@ public class ShipMovement : MonoBehaviour
     {
         Time.timeScale = 0;
         menuGameOver.SetActive(true);
+    }
+
+    public void End()
+    {
+        GameObject[] music = GameObject.Find("gameMusic").GetComponent<dontDestroyOnLoad>().music;
+        Destroy(music[0]);
+        SceneManager.LoadScene("Credits");
     }
 }

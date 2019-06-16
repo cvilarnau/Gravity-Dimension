@@ -11,6 +11,7 @@ TagManager:
   - item
   - endCube
   - barrelTrigger
+  - gameMusic
   layers:
   - Default
   - TransparentFX

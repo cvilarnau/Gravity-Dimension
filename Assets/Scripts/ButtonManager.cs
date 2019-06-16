@@ -17,9 +17,4 @@ public class ButtonManager : MonoBehaviour
     {
         SceneManager.LoadScene("Level1");
     }
-
-    /*public void Level2()
-    {
-        SceneManager.LoadScene("Level2");
-    }*/
 }
