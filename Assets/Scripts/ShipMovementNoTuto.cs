@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ShipMovement : MonoBehaviour
+public class ShipMovementNoTuto : MonoBehaviour
 {
     Rigidbody rb;
     public float jumpForce;
@@ -19,7 +19,6 @@ public class ShipMovement : MonoBehaviour
     bool velocityFast = false;
     bool start = false;
     bool levelFinished = false;
-    bool barrelTuto = false;
 
     float maxfuel = 100f;
     public Image fuelbar;
@@ -27,7 +26,6 @@ public class ShipMovement : MonoBehaviour
 
     public GameObject startMessage;
     public GameObject endMessage;
-    public GameObject barrelMessage;
 
     public GameObject explosion;
     private Renderer[] rend;
@@ -39,7 +37,6 @@ public class ShipMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         menuGameOver.SetActive(false);
         menuPause.SetActive(false);
-        barrelMessage.SetActive(false);
         Time.timeScale = 0;
 
         fuel = maxfuel;
@@ -49,7 +46,7 @@ public class ShipMovement : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !dead && !pause && !levelFinished && !barrelTuto)
+        if (Input.GetMouseButtonDown(0) && !dead && !pause && !levelFinished)
         {
             Time.timeScale = 1;
             start = true;
@@ -70,14 +67,14 @@ public class ShipMovement : MonoBehaviour
         }
         ////////////////////////////////////////////////////////////
 
-        if (!pause && !dead && start && !levelFinished && !barrelTuto && velocityFast)
+        if (!pause && !dead && start && !levelFinished && velocityFast)
         {
             transform.Translate(Input.acceleration.x, 0, 0);
         }
 
         fuelbar.fillAmount = fuel / maxfuel;
 
-        if (touchingPlatform && !barrelTuto && !dead && velocityFast)
+        if (touchingPlatform && !dead && velocityFast)
         {
             if (Input.GetMouseButtonDown(0) && (EventSystem.current.currentSelectedGameObject == null) && (fuelbar.fillAmount != 0f))
             {
@@ -116,12 +113,6 @@ public class ShipMovement : MonoBehaviour
 
             tunnel = false;
         }
-
-        if (barrelTuto && Input.GetMouseButtonDown(0))
-        {
-            Time.timeScale = 1;
-            barrelMessage.SetActive(false);
-        }
     }
 
     void OnCollisionStay(Collision collision)
@@ -158,9 +149,8 @@ public class ShipMovement : MonoBehaviour
 
     public void Restart()
     {
-        GameObject[] music = GameObject.Find("gameMusic").GetComponent<dontDestroyOnLoad>().music;
-        Destroy(music[0]);
-        SceneManager.LoadScene("Level1");
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 
     public void Exit()
@@ -198,27 +188,6 @@ public class ShipMovement : MonoBehaviour
             {
                 GameObject.Find("Platforms").GetComponent<PlatformMovement>().maxSpeed = 100f;
                 velocityFast = true;
-            }
-        }
-
-        if (collision.gameObject.tag == "barrelTrigger")
-        {
-            if (!barrelTuto)
-            {
-                barrelMessage.SetActive(true);
-                Time.timeScale = 0;
-                barrelTuto = true;
-            }
-        }
-    }
-
-    void OnTriggerExit(Collider collision)
-    {
-        if (collision.gameObject.tag == "barrelTrigger")
-        {
-            if (barrelTuto && !dead)
-            {
-                barrelTuto = false;
             }
         }
     }

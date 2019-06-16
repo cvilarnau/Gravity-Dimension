@@ -15,6 +15,6 @@ public class ButtonManager : MonoBehaviour
 
     public void Level1()
     {
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene("Level1Tuto");
     }
 }
